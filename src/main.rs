@@ -14,6 +14,10 @@ struct Args {
     // serve command is used to serve the project on local server
     #[arg(short, long)]
     serve: String,
+
+    // clear command is used to clear caches.
+    #[arg(short, long)]
+    clear: bool,
 }
 
 fn main() {
@@ -27,5 +31,8 @@ fn main() {
     }
     if args.init != "" {
         println!("Initializing a new project in {}", args.init);
+    }
+    if args.clear {
+        println!("Clearing caches");
     }
 }
