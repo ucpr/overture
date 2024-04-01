@@ -1,38 +1,28 @@
-use clap::Parser;
+use clap::{Parser, Subcommand};
 
-#[derive(Parser, Debug)]
-#[command(version, about, long_about = None)]
-struct Args {
-    // init command is used to initialize a new project
-    #[arg(short, long)]
-    init: String,
+#[derive(Debug, Parser)]
+struct Cli {
+    #[command(subcommand)]
+    command: Commands,
+}
 
-    // build command is used to build the project
-    #[arg(short, long)]
-    build: String,
-
-    // serve command is used to serve the project on local server
-    #[arg(short, long)]
-    serve: String,
-
-    // clear command is used to clear caches.
-    #[arg(short, long)]
-    clear: bool,
+#[derive(Debug, Subcommand)]
+enum Commands {
+    #[command(about = "help for build")]
+    Build,
+    #[command(about = "help for init")]
+    Init,
 }
 
 fn main() {
-    let args = Args::parse();
+    let cli = Cli::parse();
 
-    if args.serve != "" {
-        println!("Serving on port {}", args.serve);
-    }
-    if args.build != "" {
-        println!("Building for {}", args.build);
-    }
-    if args.init != "" {
-        println!("Initializing a new project in {}", args.init);
-    }
-    if args.clear {
-        println!("Clearing caches");
+    match cli.command {
+        Commands::Build => {
+            println!("unimplemented build command");
+        }
+        Commands::Init => {
+            println!("unimplemented init command");
+        }
     }
 }
