@@ -10,12 +10,22 @@ pub struct Project {
 // .
 // ├── config.toml -- Project configuration
 // ├── contents/   -- Content files
-// └── statics/    -- Generated static files
+// ├── generates/   -- Generates files
+// └── statics/    -- Static files (images, css, js, etc.)
 //
 
 impl Project {
     pub fn new(root: PathBuf) -> Self {
         Project { root }
+    }
+
+    pub fn create(&self) -> std::io::Result<()> {
+        let root = PathBuf::from(".");
+        fs::create_dir_all(root.join("contents"))?;
+        fs::create_dir_all(root.join("generates"))?;
+        fs::create_dir_all(root.join("statics"))?;
+        fs::write(root.join("config.toml"), "")?;
+        Ok(())
     }
 
     pub fn read_file(&self, path: &str) -> String {

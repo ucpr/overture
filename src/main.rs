@@ -1,4 +1,8 @@
+use std::path::PathBuf;
+
 use clap::{Parser, Subcommand};
+
+use overture::project;
 
 #[derive(Debug, Parser)]
 struct Cli {
@@ -11,7 +15,10 @@ enum Commands {
     #[command(about = "help for build")]
     Build,
     #[command(about = "help for init")]
-    Init,
+    Init {
+        #[arg(short, long)]
+        root: String,
+    },
 }
 
 fn main() {
@@ -21,8 +28,15 @@ fn main() {
         Commands::Build => {
             println!("unimplemented build command");
         }
-        Commands::Init => {
-            println!("unimplemented init command");
+
+        Commands::Init { root } => {
+            let root_path_buf = PathBuf::from(root);
+            let prj = project::Project::new(root_path_buf);
+            // prj.create()
+            match prj.create() {
+                Ok(_) => println!("Project created successfully"),
+                Err(e) => println!("Error creating project: {}", e),
+            }
         }
     }
 }
