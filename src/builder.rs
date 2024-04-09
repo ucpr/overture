@@ -4,15 +4,15 @@ use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
 
-use minijinja::{context, Environment};
+use minijinja::context;
 
 pub struct Builder {
-    env: Environment<'static>,
+    env: minijinja::Environment<'static>,
 }
 
 impl Builder {
     pub fn new() -> Self {
-        let mut env = Environment::new();
+        let mut env = minijinja::Environment::new();
 
         #[cfg(feature = "bundled")]
         {

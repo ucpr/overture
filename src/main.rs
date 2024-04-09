@@ -4,7 +4,8 @@ use tokio;
 
 use overture::builder;
 use overture::project;
-use overture::rss;
+use overture::server;
+// use overture::rss;
 
 #[derive(Debug, Parser)]
 struct Cli {
@@ -16,6 +17,13 @@ struct Cli {
 enum Commands {
     #[command(about = "help for build")]
     Build,
+
+    #[command(about = "help for serve")]
+    Serve {
+        #[arg(short, long)]
+        port: u16,
+    },
+
     #[command(about = "help for init")]
     Init {
         #[arg(short, long)]
@@ -42,6 +50,18 @@ async fn main() {
 
             match builder.build() {
                 Ok(_) => println!("Build successful"),
+                Err(_) => println!("Error building project"),
+            }
+        }
+
+        Commands::Serve { port } => {
+            let builder = builder::Builder::new();
+
+            match builder.build() {
+                Ok(_) => {
+                    let server = server::Server::new("0.0.0.0".to_string(), port);
+                    server.serve().await
+                }
                 Err(_) => println!("Error building project"),
             }
         }
