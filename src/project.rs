@@ -1,6 +1,8 @@
 use std::fs;
 use std::path::PathBuf;
 
+use crate::config::Config;
+
 pub struct Project {
     root: PathBuf,
 }
@@ -24,7 +26,8 @@ impl Project {
         fs::create_dir_all(root.join("contents"))?;
         fs::create_dir_all(root.join("generates"))?;
         fs::create_dir_all(root.join("statics"))?;
-        fs::write(root.join("config.toml"), "")?;
+        let _ = Config::default().to_file(root.join("config.toml"));
+
         Ok(())
     }
 

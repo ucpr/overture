@@ -33,6 +33,11 @@ impl Article {
         format!("<h1>{}</h1><div>{}</div>", self.title, body)
     }
 
+    pub fn save(&self, path: &str) -> Result<(), std::io::Error> {
+        let html = self.build();
+        std::fs::write(path, html)
+    }
+
     pub fn hash(&self) -> u64 {
         const_xxh3(self.build().as_bytes())
     }
