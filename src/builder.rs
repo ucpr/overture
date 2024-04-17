@@ -11,10 +11,12 @@ pub struct Builder {
     env: minijinja::Environment<'static>,
     config: config::Config,
     default_ctx: minijinja::Value,
+
+    articles: Vec<rss::RssItem>,
 }
 
 impl Builder {
-    pub fn new() -> Self {
+    pub async fn new() -> Self {
         let mut env = minijinja::Environment::new();
 
         let config_path = PathBuf::from("config.toml");
@@ -24,8 +26,9 @@ impl Builder {
             description => config.description,
             header => config.header,
             footer => config.footer,
-            profile => config.profile,
         };
+
+        let articles = rss::aggregate_rss_items(config.rss.urls.clone()).await.unwrap();
 
         #[cfg(feature = "bundled")]
         {
@@ -37,7 +40,7 @@ impl Builder {
             env.set_loader(minijinja::path_loader("./src/templates"));
         }
 
-        Builder { env, config, default_ctx }
+        Builder { env, config, default_ctx, articles }
     }
 
     fn context(&self, ctx: minijinja::Value) -> minijinja::Value {
@@ -47,13 +50,12 @@ impl Builder {
         }
     }
 
-    async fn build_index(&self) -> Result<(), ()> {
-        let articles = rss::aggregate_rss_items(self.config.rss.urls.clone()).await.unwrap();
-
+    fn build_index(&self) -> Result<(), ()> {
         let template = self.env.get_template("index.html").unwrap();
         let page = self.context(
             context! {
-                articles => articles,
+                profile => self.config.profile,
+                articles => self.articles,
             }
         );
         let content = template.render(context!(page)).unwrap();
@@ -64,13 +66,11 @@ impl Builder {
         Ok(())
     }
 
-    async fn build_articles(&self) -> Result<(), ()> {
-        let articles = rss::aggregate_rss_items(self.config.rss.urls.clone()).await.unwrap();
-
+    fn build_articles(&self) -> Result<(), ()> {
         let template = self.env.get_template("articles.html").unwrap();
         let page = self.context(
             context! {
-                articles => articles,
+                articles => self.articles,
             }
         );
         let content = template.render(context!(page)).unwrap();
@@ -81,9 +81,9 @@ impl Builder {
         Ok(())
     }
 
-    pub async fn build(&self) -> Result<(), ()> {
-        self.build_index().await.unwrap();
-        self.build_articles().await.unwrap();
+    pub fn build(&self) -> Result<(), ()> {
+        self.build_index().unwrap();
+        self.build_articles().unwrap();
 
         Ok(())
     }

@@ -35,18 +35,18 @@ async fn main() {
     let cli = Cli::parse();
     match cli.command {
         Commands::Build => {
-            let builder = builder::Builder::new();
+            let builder = builder::Builder::new().await;
 
-            match builder.build().await {
+            match builder.build() {
                 Ok(_) => println!("Build successful"),
                 Err(_) => println!("Error building project"),
             }
         }
 
         Commands::Serve { port } => {
-            let builder = builder::Builder::new();
+            let builder = builder::Builder::new().await;
 
-            match builder.build().await {
+            match builder.build() {
                 Ok(_) => {
                     let server = server::Server::new("127.0.0.1".to_string(), port);
                     server.serve().await
