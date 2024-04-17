@@ -7,7 +7,6 @@ use minijinja::context;
 use crate::config;
 use crate::rss;
 
-
 pub struct Builder {
     env: minijinja::Environment<'static>,
 }
@@ -29,7 +28,7 @@ impl Builder {
         Builder { env }
     }
 
-    pub async fn build(&self) -> Result<(), ()> {
+    async fn build_index(&self) -> Result<(), ()> {
         let path = PathBuf::from("config.toml");
         let config = config::from_file(path).unwrap();
 
@@ -39,7 +38,6 @@ impl Builder {
         let page = context! {
             title => config.title,
             description => config.description,
-            content => "Hello World",
             header => config.header,
             footer => config.footer,
             profile => config.profile,
@@ -51,6 +49,12 @@ impl Builder {
         // save file
         let mut file = File::create("./generates/index.html").unwrap();
         file.write_all(content.as_bytes()).unwrap();
+        Ok(())
+    }
+
+    pub async fn build(&self) -> Result<(), ()> {
+        self.build_index().await.unwrap();
+
         Ok(())
     }
 }

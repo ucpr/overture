@@ -9,7 +9,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
-
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       body {
@@ -19,40 +18,12 @@
   </style>
   </head>
   <body class="max-w-xl mx-auto">
-    {% include "header.html" %}
+    {% include "components/header.html" %}
 
     <main class="p-4">
-      <div class="overflow-hidden flex md:flex-row flex-col max-w-4xl mx-auto">
-        <div class="md:w-1-2 flex justify-center items-center p-4">
-          <img src="{{ page.profile.icon_url }}" alt="icon" class="rounded-full w-1/2 h-auto sm:w-3/4 md:w-full md:h-auto">
-        </div>
-
-        <div class="md:w-1/2 p-8">
-          <p class="text-gray-600 text-sm">
-            {{ page.profile.introduction }}
-          </p>
-        </div>
-      </div>
-
-      <div>
-        <h2 class="text-xl font-bold underline">
-          Articles
-        </h2>
-        <ul class="p-3">
-          {% for article in page.articles %}
-          <li class="pb-2">
-            <p class="text-xs text-gray-700">{{ article.pub_date }}</p>
-            <a href="{{ article.link }}" target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-800">
-              {{ article.title }}
-            </a>
-          </li>
-          {% endfor %}
-        </ul>
-      </div>
-
       {% block body %}{% endblock %}
     </main>
 
-    {% include "footer.html" %}
+    {% include "components/footer.html" %}
     </body>
 </html
