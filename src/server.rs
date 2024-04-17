@@ -15,6 +15,12 @@ async fn index() -> Option<NamedFile> {
 
 #[get("/<file..>")]
 async fn file(file: PathBuf) -> Option<NamedFile> {
+    // 拡張子がないときは .html をつける
+    let file = if file.extension().is_none() {
+        file.with_extension("html")
+    } else {
+        file
+    };
     NamedFile::open(Path::new("generates/").join(file))
         .await
         .ok()
