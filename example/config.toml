@@ -17,6 +17,10 @@ url = "/"
 name = "About"
 url = "/about"
 
+[[header.links]]
+name = "Articles"
+url = "/articles"
+
 [footer]
 name = "John Akiyama"
 

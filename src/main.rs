@@ -48,7 +48,7 @@ async fn main() {
 
             match builder.build().await {
                 Ok(_) => {
-                    let server = server::Server::new("0.0.0.0".to_string(), port);
+                    let server = server::Server::new("127.0.0.1".to_string(), port);
                     server.serve().await
                 }
                 Err(_) => println!("Error building project"),

@@ -65,6 +65,10 @@ impl Default for Config {
                         name: "About".to_string(),
                         url: "/about".to_string(),
                     },
+                    HeaderLink {
+                        name: "Articles".to_string(),
+                        url: "/articles".to_string(),
+                    },
                 ],
             }),
             profile: Profile {
