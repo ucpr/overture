@@ -64,9 +64,13 @@ impl Builder {
 
     fn build_index(&self) -> Result<(), ()> {
         let template = self.env.get_template("index.html").unwrap();
+        let articles = {
+            let limit = self.articles.len().min(5);
+            &self.articles[..limit]
+        };
         let page = self.context(context! {
             profile => self.config.profile,
-            articles => self.articles,
+            articles => articles,
         });
         let content = template.render(context!(page)).unwrap();
 

@@ -1,0 +1,26 @@
+<div>
+  <h2 class="text-xl font-bold underline">
+    Articles
+  </h2>
+  <ul class="p-3">
+    {% for article in page.articles %}
+    <li class="pb-2">
+      <p class="text-xs text-gray-700">{{ article.pub_date }}</p>
+      {% if article.source == "Unknown" %}
+      <a href="{{ article.link }}" class="text-blue-600 hover:text-blue-800">
+      {% else %}
+      <a href="{{ article.link }}"  target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-800">
+      {% endif %}
+        {{ article.title }}
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% if has_limit %}
+  <div class="container mx-auto text-right">
+    <a href="/articles" class="text-blue-600 hover:text-blue-800">
+      More Articles
+    </a>
+  </div>
+  {% endif %}
+</div>
