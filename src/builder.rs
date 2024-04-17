@@ -4,6 +4,7 @@ use std::path::PathBuf;
 
 use minijinja::context;
 
+use crate::article;
 use crate::config;
 use crate::rss;
 
@@ -12,7 +13,7 @@ pub struct Builder {
     config: config::Config,
     default_ctx: minijinja::Value,
 
-    articles: Vec<rss::RssItem>,
+    articles: Vec<rss::Item>,
 }
 
 impl Builder {
@@ -28,7 +29,13 @@ impl Builder {
             footer => config.footer,
         };
 
-        let articles = rss::aggregate_rss_items(config.rss.urls.clone()).await.unwrap();
+        let external_articles = rss::aggregate_rss_items(config.rss.urls.clone())
+            .await
+            .unwrap();
+        let articles = article::Articles::new();
+        let mut data = articles.save().unwrap(); // save original articles
+        data.extend(external_articles.clone());
+        data.sort_by(|a, b| b.pub_date.cmp(&a.pub_date));
 
         #[cfg(feature = "bundled")]
         {
@@ -40,7 +47,12 @@ impl Builder {
             env.set_loader(minijinja::path_loader("./src/templates"));
         }
 
-        Builder { env, config, default_ctx, articles }
+        Builder {
+            env,
+            config,
+            default_ctx,
+            articles: data,
+        }
     }
 
     fn context(&self, ctx: minijinja::Value) -> minijinja::Value {
@@ -52,12 +64,10 @@ impl Builder {
 
     fn build_index(&self) -> Result<(), ()> {
         let template = self.env.get_template("index.html").unwrap();
-        let page = self.context(
-            context! {
-                profile => self.config.profile,
-                articles => self.articles,
-            }
-        );
+        let page = self.context(context! {
+            profile => self.config.profile,
+            articles => self.articles,
+        });
         let content = template.render(context!(page)).unwrap();
 
         // save file
@@ -68,11 +78,9 @@ impl Builder {
 
     fn build_articles(&self) -> Result<(), ()> {
         let template = self.env.get_template("articles.html").unwrap();
-        let page = self.context(
-            context! {
-                articles => self.articles,
-            }
-        );
+        let page = self.context(context! {
+            articles => self.articles,
+        });
         let content = template.render(context!(page)).unwrap();
 
         // save file

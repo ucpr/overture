@@ -1,4 +1,5 @@
 init:
+	rm -r generates
 	cargo run --features=bundled init --root .
 
 build:

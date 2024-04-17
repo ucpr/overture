@@ -11,7 +11,7 @@ pub struct Project {
 //
 // .
 // ├── config.toml -- Project configuration
-// ├── contents/   -- Content files
+// ├── articles/   -- article files
 // ├── generates/   -- Generates files
 // └── statics/    -- Static files (images, css, js, etc.)
 //
@@ -23,8 +23,8 @@ impl Project {
 
     pub fn create(&self) -> std::io::Result<()> {
         let root = PathBuf::from(".");
-        fs::create_dir_all(root.join("contents"))?;
-        fs::create_dir_all(root.join("generates"))?;
+        fs::create_dir_all(root.join("articles"))?;
+        fs::create_dir_all(root.join("generates/articles"))?;
         fs::create_dir_all(root.join("statics"))?;
         let _ = Config::default().to_file(root.join("config.toml"));
 

@@ -6,7 +6,7 @@ use rss::Channel;
 use chrono::{Utc, DateTime};
 use chrono_tz::Asia::Tokyo;
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub enum Source {
     Unknown,
     Zenn,
@@ -14,8 +14,19 @@ pub enum Source {
     HatenaBlog,
 }
 
-#[derive(Debug, Serialize)]
-pub struct RssItem {
+impl ToString for Source {
+    fn to_string(&self) -> String {
+        match self {
+            Source::Unknown => "Unknown".to_string(),
+            Source::Zenn => "Zenn".to_string(),
+            Source::ZennScrap => "ZennScrap".to_string(),
+            Source::HatenaBlog => "HatenaBlog".to_string(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct Item {
     pub title: String,
     pub link: String,
     pub source: Source,
@@ -35,7 +46,7 @@ pub async fn fetch_feed(url: String) -> Result<Channel, Box<dyn Error>> {
     Ok(channel)
 }
 
-pub async fn aggregate_rss_items(urls: Vec<String>) -> Result<Vec<RssItem>, Box<dyn Error>> {
+pub async fn aggregate_rss_items(urls: Vec<String>) -> Result<Vec<Item>, Box<dyn Error>> {
     let mut items = Vec::new();
 
     for url in urls {
@@ -44,7 +55,7 @@ pub async fn aggregate_rss_items(urls: Vec<String>) -> Result<Vec<RssItem>, Box<
             let pub_date: DateTime<Utc> = DateTime::parse_from_rfc2822(item.pub_date().unwrap())?.into();
             let source = detect_source(item.link().unwrap());
 
-            items.push(RssItem {
+            items.push(Item {
                 title: item.title().unwrap().to_string(),
                 link: item.link().unwrap().to_string(),
                 source,
