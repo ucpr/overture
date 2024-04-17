@@ -32,16 +32,15 @@ impl Builder {
         let external_articles = rss::aggregate_rss_items(config.rss.urls.clone())
             .await
             .unwrap();
-        let articles = article::Articles::new();
-        let mut data = articles.save().unwrap(); // save original articles
-        data.extend(external_articles.clone());
-        data.sort_by(|a, b| b.pub_date.cmp(&a.pub_date));
+        let art = article::Articles::new();
+        let mut articles = art.save().unwrap(); // save original articles
+        articles.extend(external_articles.clone());
+        articles.sort_by(|a, b| b.pub_date.cmp(&a.pub_date));
 
         #[cfg(feature = "bundled")]
         {
             minijinja_embed::load_templates!(&mut env);
         }
-
         #[cfg(not(feature = "bundled"))]
         {
             env.set_loader(minijinja::path_loader("./src/templates"));
@@ -51,7 +50,7 @@ impl Builder {
             env,
             config,
             default_ctx,
-            articles: data,
+            articles,
         }
     }
 
