@@ -5,7 +5,6 @@ use tokio;
 use overture::builder;
 use overture::project;
 use overture::server;
-// use overture::rss;
 
 #[derive(Debug, Parser)]
 struct Cli {
@@ -33,16 +32,6 @@ enum Commands {
 
 #[tokio::main]
 async fn main() {
-    /*
-        let channel = rss::example_feed().await.unwrap();
-        println!("Title: {}", channel.title);
-        for item in channel.items.iter() {
-            println!("Item: {}", item.title().unwrap());
-            println!("Link: {}", item.link().unwrap());
-            println!("Date: {}", item.pub_date().unwrap());
-        }
-    */
-
     let cli = Cli::parse();
     match cli.command {
         Commands::Build => {
