@@ -64,7 +64,6 @@ pub async fn aggregate_rss_items(urls: Vec<String>) -> Result<Vec<Item>, Box<dyn
         }
     }
 
-    items.sort_by(|a, b| b.pub_date.cmp(&a.pub_date));
     Ok(items)
 }
 

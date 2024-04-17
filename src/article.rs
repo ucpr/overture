@@ -7,6 +7,7 @@ use crate::rss::{Item, Source};
 #[derive(Debug, Deserialize)]
 pub struct Options {
     pub title: String,
+    pub date: String,
     pub tags: Vec<String>,
 }
 
@@ -122,7 +123,7 @@ impl Articles {
                 title: article.options.title.clone(),
                 link: format!("articles/{}.html", name),
                 source: Source::Unknown,
-                pub_date: "2021/01/01".to_string(),
+                pub_date: article.options.date.clone(),
             });
         }
 
@@ -151,6 +152,7 @@ body
             let ext = "md".to_string();
             let options = Options {
                 title,
+                date: "2021-01-01".to_string(),
                 tags: vec!["test".to_string(), "article".to_string()],
             };
             Article {
@@ -173,6 +175,7 @@ body
             let ext = "md".to_string();
             let options = Options {
                 title,
+                date: "2021-01-01".to_string(),
                 tags: vec!["test".to_string(), "article".to_string()],
             };
             Article {
