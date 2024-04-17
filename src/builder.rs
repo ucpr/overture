@@ -1,10 +1,12 @@
-use crate::config;
-
 use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
 
 use minijinja::context;
+
+use crate::config;
+use crate::rss;
+
 
 pub struct Builder {
     env: minijinja::Environment<'static>,
@@ -27,16 +29,21 @@ impl Builder {
         Builder { env }
     }
 
-    pub fn build(&self) -> Result<(), ()> {
+    pub async fn build(&self) -> Result<(), ()> {
         let path = PathBuf::from("config.toml");
         let config = config::from_file(path).unwrap();
 
-        let title = config.title;
+        let articles = rss::aggregate_rss_items(config.rss.urls).await.unwrap();
 
         let template = self.env.get_template("index.html").unwrap();
         let page = context! {
-            title => title,
-            content => "Lorum Ipsum",
+            title => config.title,
+            description => config.description,
+            content => "Hello World",
+            header => config.header,
+            footer => config.footer,
+            profile => config.profile,
+            articles => articles,
         };
 
         let content = template.render(context!(page)).unwrap();

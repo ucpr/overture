@@ -48,7 +48,7 @@ async fn main() {
         Commands::Build => {
             let builder = builder::Builder::new();
 
-            match builder.build() {
+            match builder.build().await {
                 Ok(_) => println!("Build successful"),
                 Err(_) => println!("Error building project"),
             }
@@ -57,7 +57,7 @@ async fn main() {
         Commands::Serve { port } => {
             let builder = builder::Builder::new();
 
-            match builder.build() {
+            match builder.build().await {
                 Ok(_) => {
                     let server = server::Server::new("0.0.0.0".to_string(), port);
                     server.serve().await

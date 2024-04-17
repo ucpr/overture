@@ -1,1 +1,24 @@
 title = "Default Title"
+description = "Default Description"
+
+[profile]
+name = "Default Name"
+icon_url = "https://via.placeholder.com/200"
+introduction = """
+私はフロントエンドおよびバックエンドの開発に10年以上の経験があります。
+              JavaScript、React、Node.jsを主に使用しています。新しいプロジェクトに挑戦することが大好きで、
+              常に最新の技術を学び続けています。"""
+
+[[header.links]]
+name = "Home"
+url = "/"
+
+[[header.links]]
+name = "About"
+url = "/about"
+
+[footer]
+name = "John Akiyama"
+
+[rss]
+urls = ["https://zenn.dev/ucpr/feed?include_scraps=1", "https://ucpr.hatenablog.com/rss"]
