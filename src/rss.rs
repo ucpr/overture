@@ -11,7 +11,7 @@ use url;
 pub enum Source {
     Unknown,
     Zenn,
-    ZennScrap,
+    ZennScraps,
     HatenaBlog,
 }
 
@@ -20,7 +20,7 @@ impl ToString for Source {
         match self {
             Source::Unknown => "Unknown".to_string(),
             Source::Zenn => "Zenn".to_string(),
-            Source::ZennScrap => "Zenn Scraps".to_string(),
+            Source::ZennScraps => "Zenn Scraps".to_string(),
             Source::HatenaBlog => "HatenaBlog".to_string(),
         }
     }
@@ -133,7 +133,7 @@ fn detect_source(url: &str) -> Source {
     if url.contains("zenn.dev") && url.contains("articles") {
         Source::Zenn
     } else if url.contains("zenn.dev") && url.contains("scraps") {
-        Source::ZennScrap
+        Source::ZennScraps
     } else if url.contains("hatenablog.com") {
         Source::HatenaBlog
     } else {
