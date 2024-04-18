@@ -1208,6 +1208,7 @@ dependencies = [
  "serde_json",
  "tokio",
  "toml",
+ "url",
  "xxhash-rust",
 ]
 

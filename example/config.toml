@@ -1,5 +1,6 @@
 title = "Default Title"
 description = "Default Description"
+url = "https://www.ucpr.dev"
 
 [profile]
 name = "Default Name"
@@ -46,7 +47,9 @@ url = "/articles"
 name = "John Akiyama"
 
 [rss]
-urls = ["https://zenn.dev/ucpr/feed?include_scraps=1", "https://ucpr.hatenablog.com/rss"]
+external_rss_links = ["https://zenn.dev/ucpr/feed?include_scraps=1", "https://ucpr.hatenablog.com/rss"]
+title = "Default RSS Title"
+description = "Default RSS Description"
 
 [google_analytics]
 tracking_id = "UA-123456789-0"

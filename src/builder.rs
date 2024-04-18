@@ -30,11 +30,20 @@ impl Builder {
             google_analytics => config.google_analytics,
         };
 
-        let external_articles = rss::aggregate_rss_items(config.rss.urls.clone())
+        let external_articles = rss::aggregate_rss_items(config.rss.external_rss_links.clone())
             .await
             .unwrap();
         let art = article::Articles::new();
         let mut articles = art.save().unwrap(); // save original articles
+
+        let rss_creator = rss::RSS::new(
+            config.rss.title.clone(),
+            config.rss.description.clone(),
+            config.url.clone(),
+            articles.clone(),
+        );
+        rss_creator.save("./generates/rss.xml").unwrap();
+
         articles.extend(external_articles.clone());
         articles.sort_by(|a, b| b.pub_date.cmp(&a.pub_date));
 

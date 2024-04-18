@@ -3,8 +3,9 @@ use std::error::Error;
 use chrono::{DateTime, Utc};
 use chrono_tz::Asia::Tokyo;
 use reqwest;
-use rss::Channel;
+use rss::{Channel, ChannelBuilder};
 use serde::Serialize;
+use url;
 
 #[derive(Debug, Clone, Serialize)]
 pub enum Source {
@@ -31,6 +32,66 @@ pub struct Item {
     pub link: String,
     pub source: Source,
     pub pub_date: String,
+}
+
+pub struct RSS {
+    title: String,
+    description: String,
+    url: String,
+    items: Vec<Item>,
+}
+
+impl RSS {
+    pub fn new(title: String, description: String, url: String, items: Vec<Item>) -> Self {
+        RSS {
+            title,
+            description,
+            url,
+            items,
+        }
+    }
+
+    fn generate_rss(&self) -> String {
+        let items = {
+            let mut items = Vec::new();
+
+            for item in self.items.iter() {
+                let pub_date = item.pub_date.to_string() + " 00:00:00 +0900";
+
+                let title = item.title.to_string();
+                let base_url = url::Url::parse(&self.url).unwrap();
+                let link = base_url.join(&item.link).unwrap().to_string();
+                let description = item.title.to_string();
+                items.push(
+                    rss::ItemBuilder::default()
+                        .title(title)
+                        .link(link)
+                        .pub_date(pub_date)
+                        .description(description)
+                        .build(),
+                );
+            }
+            items
+        };
+
+        let channel = ChannelBuilder::default()
+            .title(&self.title)
+            .description(&self.description)
+            .link(&self.url)
+            .items(items)
+            .build();
+        channel.to_string()
+    }
+
+    pub fn save(&self, path: &str) -> Result<(), Box<dyn Error>> {
+        use std::fs::File;
+        use std::io::prelude::*;
+
+        let rss = self.generate_rss();
+        let mut file = File::create(path)?;
+        file.write_all(rss.as_bytes())?;
+        Ok(())
+    }
 }
 
 pub fn format_jst_pub_date(pub_date: DateTime<Utc>) -> String {

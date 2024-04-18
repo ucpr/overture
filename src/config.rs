@@ -10,6 +10,7 @@ use std::path::PathBuf;
 pub struct Config {
     pub title: String,
     pub description: String,
+    pub url: String,
 
     pub profile: Profile,
     pub header: Option<Header>,
@@ -37,7 +38,9 @@ pub struct Footer {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Rss {
-    pub urls: Vec<String>,
+    pub external_rss_links: Vec<String>,
+    pub title: String,
+    pub description: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -89,6 +92,7 @@ impl Default for Config {
         Config {
             title: "Default Title".to_string(),
             description: "Default Description".to_string(),
+            url: "https://example.com".to_string(),
             header: Some(Header {
                 title: "Default Header Title".to_string(),
                 links: vec![
@@ -137,7 +141,9 @@ impl Default for Config {
                 name: "John Akiyama".to_string(),
             },
             rss: Rss {
-                urls: vec![
+                title: "Default RSS Title".to_string(),
+                description: "Default RSS Description".to_string(),
+                external_rss_links: vec![
                     "https://zenn.dev/ucpr/feed?include_scraps=1".to_string(),
                     "https://ucpr.hatenablog.com/rss".to_string(),
                 ],
