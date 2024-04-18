@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+{% block title %}{{ page.title }}{% endblock %}
+{% block description %}{{ page.description }}{% endblock %}
+{% block head%}
+<meta name="robots" content="noindex,nofollow" />
+{% endblock %}
+{% block body %}
+{% include "components/profile.html" %}
+
+<div>
+  <h2 class="text-xl font-bold underline">
+    Work Experiences
+  </h2>
+  <div class="space-y-2 pb-4 mx-auto">
+    {% for experience in page.profile.work_experiences %}
+    <div class="px-2 pt-2">
+      <h3 class="font-semibold text-lg">&gt; {{ experience.company }}</h3>
+      {% for project in experience.projects %}
+      <div class="space-y-3 mt-2 px-2">
+        <div class="mx-auto">
+          <div class="flex justify-between items-center">
+            <h4 class="text-md font-semibold">{{ project.name }}</h4>
+            <p class="text-gray-500 text-xs">{{ project.period }}</p>
+          </div>
+          <p class="text-sm text-gray-600 text-pretty pt-2">{{ project.description }}</p>
+          <div class="flex flex-wrap gap-2 mt-2">
+            {% for tag in project.tags %}
+            <span class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">{{ tag }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div>
+  <h2 class="text-xl font-bold underline">
+    Certifications
+  </h2>
+    <div class="space-y-2 pb-4 px-2">
+      {% for certification in page.profile.certificates %}
+      <div class="px-2 pt-2 mx-auto">
+        <div class="flex justify-between items-center">
+          <a href="{{ certification.url }}" class="text-blue-500 hover:text-blue-700 font-semibold text-md">
+            {{ certification.name }}
+          </a>
+          <p class="text-gray-500 text-xs">{{ certification.date }}</p>
+        </div>
+        <p class="text-sm text-gray-600 text-pretty pt-2 px-2">{{ certification.description }}</p>
+      </div>
+      {% endfor %}
+    </div>
+</div>
+
+<div>
+  <h2 class="text-xl font-bold underline">
+    Skills (TBD)
+  </h2>
+</div>
+{% endblock %}

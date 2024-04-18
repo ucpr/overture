@@ -9,6 +9,23 @@ introduction = """
               JavaScript、React、Node.jsを主に使用しています。新しいプロジェクトに挑戦することが大好きで、
               常に最新の技術を学び続けています。"""
 
+[[profile.work_experiences]]
+company = "Default Company"
+active = true
+
+[[profile.work_experiences.projects]]
+name = "Default Project"
+period = "2020/01 - 2020/12"
+description = "Default Description.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+tags = ["Default Tag"]
+
+[[profile.certificates]]
+name = "Default Certificate"
+date = "2020/12"
+description = "Default Description"
+is_expired = false
+url = "https://example.com"
+
 [header]
 title = "Default Header Title"
 

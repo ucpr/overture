@@ -44,6 +44,32 @@ pub struct Profile {
     pub name: String,
     pub icon_url: String,
     pub introduction: String,
+    pub work_experiences: Vec<WorkExperience>,
+    pub certificates: Vec<Certificate>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct WorkExperience {
+    pub company: String,
+    pub active: bool,
+    pub projects: Vec<WorkExperienceProject>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct WorkExperienceProject {
+    pub name: String,
+    pub period: String,
+    pub description: String,
+    pub tags: Vec<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Certificate {
+    pub name: String,
+    pub date: String,
+    pub description: String,
+    pub is_expired: bool,
+    pub url: Option<String>,
 }
 
 pub fn from_file(path: PathBuf) -> Result<Config, toml::de::Error> {
@@ -79,6 +105,25 @@ impl Default for Config {
                 introduction: "私はフロントエンドおよびバックエンドの開発に10年以上の経験があります。
               JavaScript、React、Node.jsを主に使用しています。新しいプロジェクトに挑戦することが大好きで、
               常に最新の技術を学び続けています。".to_string(),
+                work_experiences: vec![WorkExperience {
+                    company: "Default Company".to_string(),
+                    active: true,
+                    projects: vec![
+                        WorkExperienceProject {
+                            name: "Default Project".to_string(),
+                            period: "2020/01 - 2020/12".to_string(),
+                            description: "Default Description.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx".to_string(),
+                            tags: vec!["Default Tag".to_string()],
+                        },
+                    ],
+                }],
+                certificates: vec![Certificate {
+                    name: "Default Certificate".to_string(),
+                    date: "2020/12".to_string(),
+                    description: "Default Description".to_string(),
+                    is_expired: false,
+                    url: Some("https://example.com".to_string()),
+                }],
             },
             footer: Footer {
                 name: "John Akiyama".to_string(),

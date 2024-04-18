@@ -92,9 +92,24 @@ impl Builder {
         Ok(())
     }
 
+    fn build_about(&self) -> Result<(), ()> {
+        let template = self.env.get_template("about.html").unwrap();
+        let page = self.context(context! {
+            profile => self.config.profile,
+            articles => self.articles,
+        });
+        let content = template.render(context!(page)).unwrap();
+
+        // save file
+        let mut file = File::create("./generates/about.html").unwrap();
+        file.write_all(content.as_bytes()).unwrap();
+        Ok(())
+    }
+
     pub fn build(&self) -> Result<(), ()> {
         self.build_index().unwrap();
         self.build_articles().unwrap();
+        self.build_about().unwrap();
 
         Ok(())
     }
