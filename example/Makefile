@@ -1,5 +1,5 @@
 init:
-	rm -r generates
+	rm -fr ./config.toml ./statics ./generates
 	cargo run --features=bundled init --root .
 
 build:

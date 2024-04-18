@@ -1,10 +1,10 @@
 use std::fs;
-use std::path::PathBuf;
+use std::path;
 
 use crate::config::Config;
 
 pub struct Project {
-    root: PathBuf,
+    root: path::PathBuf,
 }
 
 // Project Structure
@@ -17,14 +17,15 @@ pub struct Project {
 //
 
 impl Project {
-    pub fn new(root: PathBuf) -> Self {
+    pub fn new(root: path::PathBuf) -> Self {
         Project { root }
     }
 
     pub fn create(&self) -> std::io::Result<()> {
-        let root = PathBuf::from(".");
+        let root = path::PathBuf::from(".");
         fs::create_dir_all(root.join("articles"))?;
         fs::create_dir_all(root.join("generates/articles"))?;
+        fs::create_dir_all(root.join("generates/statics"))?;
         fs::create_dir_all(root.join("statics"))?;
         let _ = Config::default().to_file(root.join("config.toml"));
 

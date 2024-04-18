@@ -1,7 +1,8 @@
-use std::fs::File;
+use std::fs;
 use std::io::Write;
-use std::path::PathBuf;
+use std::path;
 
+use fs_extra::dir;
 use minijinja::context;
 
 use crate::article;
@@ -20,7 +21,7 @@ impl Builder {
     pub async fn new() -> Self {
         let mut env = minijinja::Environment::new();
 
-        let config_path = PathBuf::from("config.toml");
+        let config_path = path::PathBuf::from("config.toml");
         let config = config::from_file(config_path).unwrap();
         let default_ctx = context! {
             title => config.title,
@@ -84,7 +85,7 @@ impl Builder {
         let content = template.render(context!(page)).unwrap();
 
         // save file
-        let mut file = File::create("./generates/index.html").unwrap();
+        let mut file = fs::File::create("./generates/index.html").unwrap();
         file.write_all(content.as_bytes()).unwrap();
         Ok(())
     }
@@ -97,7 +98,7 @@ impl Builder {
         let content = template.render(context!(page)).unwrap();
 
         // save file
-        let mut file = File::create("./generates/articles.html").unwrap();
+        let mut file = fs::File::create("./generates/articles.html").unwrap();
         file.write_all(content.as_bytes()).unwrap();
         Ok(())
     }
@@ -111,8 +112,23 @@ impl Builder {
         let content = template.render(context!(page)).unwrap();
 
         // save file
-        let mut file = File::create("./generates/about.html").unwrap();
+        let mut file = fs::File::create("./generates/about.html").unwrap();
         file.write_all(content.as_bytes()).unwrap();
+        Ok(())
+    }
+
+    fn build_statics(&self) -> Result<(), ()> {
+        let gen_statics = path::Path::new("./generates/statics");
+        if gen_statics.exists() {
+            fs::remove_dir_all("./generates/statics").unwrap();
+        }
+
+        let mut copy_options = dir::CopyOptions::new();
+        copy_options.overwrite = true;
+        let static_src = path::Path::new("./statics");
+        let static_dest = path::Path::new("./generates/");
+        dir::copy(static_src, static_dest, &copy_options).unwrap();
+
         Ok(())
     }
 
@@ -120,6 +136,7 @@ impl Builder {
         self.build_index().unwrap();
         self.build_articles().unwrap();
         self.build_about().unwrap();
+        self.build_statics().unwrap();
 
         Ok(())
     }
