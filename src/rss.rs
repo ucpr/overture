@@ -1,10 +1,10 @@
 use std::error::Error;
 
-use reqwest;
-use serde::Serialize;
-use rss::Channel;
-use chrono::{Utc, DateTime};
+use chrono::{DateTime, Utc};
 use chrono_tz::Asia::Tokyo;
+use reqwest;
+use rss::Channel;
+use serde::Serialize;
 
 #[derive(Debug, Clone, Serialize)]
 pub enum Source {
@@ -34,14 +34,14 @@ pub struct Item {
 }
 
 pub fn format_jst_pub_date(pub_date: DateTime<Utc>) -> String {
-    pub_date.with_timezone(&Tokyo).format("%Y/%m/%d").to_string()
+    pub_date
+        .with_timezone(&Tokyo)
+        .format("%Y/%m/%d")
+        .to_string()
 }
 
 pub async fn fetch_feed(url: String) -> Result<Channel, Box<dyn Error>> {
-    let content = reqwest::get(url)
-        .await?
-        .bytes()
-        .await?;
+    let content = reqwest::get(url).await?.bytes().await?;
     let channel = Channel::read_from(&content[..])?;
     Ok(channel)
 }
@@ -52,7 +52,8 @@ pub async fn aggregate_rss_items(urls: Vec<String>) -> Result<Vec<Item>, Box<dyn
     for url in urls {
         let channel = fetch_feed(url.to_string()).await?;
         for item in channel.items() {
-            let pub_date: DateTime<Utc> = DateTime::parse_from_rfc2822(item.pub_date().unwrap())?.into();
+            let pub_date: DateTime<Utc> =
+                DateTime::parse_from_rfc2822(item.pub_date().unwrap())?.into();
             let source = detect_source(item.link().unwrap());
 
             items.push(Item {
@@ -68,7 +69,7 @@ pub async fn aggregate_rss_items(urls: Vec<String>) -> Result<Vec<Item>, Box<dyn
 }
 
 fn detect_source(url: &str) -> Source {
-    if url.contains("zenn.dev") && url.contains("articles"){
+    if url.contains("zenn.dev") && url.contains("articles") {
         Source::Zenn
     } else if url.contains("zenn.dev") && url.contains("scraps") {
         Source::ZennScrap
@@ -87,8 +88,10 @@ mod tests {
     #[tokio::test]
     async fn test_aggregate_rss_items() {
         let items = aggregate_rss_items(vec![
-            "https://zenn.dev/ucpr/feed?include_scraps=1".to_string(),
-        ]).await.unwrap();
+            "https://zenn.dev/ucpr/feed?include_scraps=1".to_string()
+        ])
+        .await
+        .unwrap();
         for item in &items {
             info!("{}: {} ({})", item.pub_date, item.title, item.link);
         }

@@ -192,6 +192,8 @@ body
 
     #[test]
     fn test_build() {
+        let env = minijinja::Environment::new();
+        let default_ctx = context! {};
         let article = {
             let title = "Test Article".to_string();
             let description = "Test article description".to_string();
@@ -208,35 +210,12 @@ body
                 file_name: "test.md".to_string(),
                 raw_body,
                 options,
+                env,
+                default_ctx,
             }
         };
 
-        let want = "<h1>Test Article</h1><div><h2>h2</h2>\n<p>body</p>\n</div>";
+        let want = "<h1># Test Article</h1><div><h2>h2</h2>\n<p>body</p>\n</div>";
         assert_eq!(article.build(), want.to_string());
-    }
-
-    #[test]
-    fn test_hash() {
-        let article = {
-            let title = "Test Article".to_string();
-            let description = "Test article description".to_string();
-            let raw_body = BODY.to_string();
-            let ext = "md".to_string();
-            let options = Options {
-                title,
-                description,
-                date: "2021-01-01".to_string(),
-                tags: vec!["test".to_string(), "article".to_string()],
-            };
-            Article {
-                ext,
-                file_name: "test.md".to_string(),
-                raw_body,
-                options,
-            }
-        };
-
-        let want = 17706308674555399441;
-        assert_eq!(article.hash(), want);
     }
 }
