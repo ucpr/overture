@@ -1,12 +1,17 @@
+use std::path::PathBuf;
+
 use markdown;
+use minijinja::context;
 use serde::Deserialize;
 use xxhash_rust::const_xxh3::xxh3_64 as const_xxh3;
 
+use crate::config;
 use crate::rss::{Item, Source};
 
 #[derive(Debug, Deserialize)]
 pub struct Options {
     pub title: String,
+    pub description: String,
     pub date: String,
     pub tags: Vec<String>,
 }
@@ -16,6 +21,9 @@ pub struct Article {
     options: Options,
     pub ext: String,
     pub file_name: String,
+
+    env: minijinja::Environment<'static>,
+    default_ctx: minijinja::Value,
 }
 
 pub struct Articles {
@@ -54,11 +62,30 @@ impl Article {
         let raw_body = std::fs::read_to_string(path)?;
         let options = Article::options(&raw_body).unwrap();
 
+        let mut env = minijinja::Environment::new();
+        #[cfg(feature = "bundled")]
+        {
+            minijinja_embed::load_templates!(&mut env);
+        }
+        #[cfg(not(feature = "bundled"))]
+        {
+            env.set_loader(minijinja::path_loader("./src/templates"));
+        }
+
+        let config_path = PathBuf::from("config.toml");
+        let config = config::from_file(config_path).unwrap();
+        let default_ctx = context! {
+            header => config.header,
+            footer => config.footer,
+        };
+
         Ok(Article {
             ext,
             file_name,
             raw_body,
             options,
+            env,
+            default_ctx,
         })
     }
 
@@ -79,11 +106,28 @@ impl Article {
             body = markdown::to_html_with_options(&body, &opts).unwrap();
         }
 
-        format!("<h1>{}</h1><div>{}</div>", self.options.title, body)
+        format!("<h1># {}</h1><div>{}</div>", self.options.title, body)
+    }
+
+    fn render(&self) -> String {
+        let html = self.build();
+
+        let template = self.env.get_template("article.html").unwrap();
+        let page = context! {
+            ..self.default_ctx.clone(),
+            ..context!{
+                content => html,
+                title => self.options.title,
+                description => self.options.description,
+            },
+        };
+        let content = template.render(context!(page)).unwrap();
+
+        content
     }
 
     pub fn save(&self, path: &str) -> Result<(), std::io::Error> {
-        let html = self.build();
+        let html = self.render();
         std::fs::write(path, html)
     }
 
@@ -137,6 +181,7 @@ mod tests {
 
     const BODY: &str = "+++
 title = \"Test Article\"
+description = \"Test article description\"
 tags = [\"test\", \"article\"]
 +++
 
@@ -148,10 +193,12 @@ body
     fn test_build() {
         let article = {
             let title = "Test Article".to_string();
+            let description = "Test article description".to_string();
             let raw_body = BODY.to_string();
             let ext = "md".to_string();
             let options = Options {
                 title,
+                description,
                 date: "2021-01-01".to_string(),
                 tags: vec!["test".to_string(), "article".to_string()],
             };
@@ -171,10 +218,12 @@ body
     fn test_hash() {
         let article = {
             let title = "Test Article".to_string();
+            let description = "Test article description".to_string();
             let raw_body = BODY.to_string();
             let ext = "md".to_string();
             let options = Options {
                 title,
+                description,
                 date: "2021-01-01".to_string(),
                 tags: vec!["test".to_string(), "article".to_string()],
             };

@@ -25,6 +25,7 @@ pub struct HeaderLink {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Header {
+    pub title: String,
     pub links: Vec<HeaderLink>,
 }
 
@@ -56,6 +57,7 @@ impl Default for Config {
             title: "Default Title".to_string(),
             description: "Default Description".to_string(),
             header: Some(Header {
+                title: "Default Header Title".to_string(),
                 links: vec![
                     HeaderLink {
                         name: "Home".to_string(),

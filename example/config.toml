@@ -9,6 +9,9 @@ introduction = """
               JavaScript、React、Node.jsを主に使用しています。新しいプロジェクトに挑戦することが大好きで、
               常に最新の技術を学び続けています。"""
 
+[header]
+title = "Default Header Title"
+
 [[header.links]]
 name = "Home"
 url = "/"

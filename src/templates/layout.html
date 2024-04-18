@@ -10,12 +10,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    {% block head %}{% endblock %}
+    <script>{% block scripts %}{% endblock %}</script>
     <style>
       body {
         font-family: "Noto Sans JP", sans-serif;
         font-optical-sizing: auto;
       }
-  </style>
+      {% block styles %}{% endblock %}
+    </style>
   </head>
   <body class="max-w-xl mx-auto">
     {% include "components/header.html" %}

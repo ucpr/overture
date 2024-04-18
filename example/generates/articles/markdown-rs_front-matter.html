@@ -1,11 +1,11 @@
 <!doctype html>
 <html>
   <head>
-    <title>Test Article</title>
+    <title>markdown-rs で front-matter に設定された値を参照する</title>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="description" content="Test Description" />
+    <meta name="description" content="markdown-rs で front-matter に設定された値を参照する" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
@@ -89,8 +89,48 @@ h4:before {
     <main class="p-4">
       
   
-    <h1># Test Article</h1><div><h2>h2</h2>
+    <h1># markdown-rs で front-matter に設定された値を参照する</h1><div><h2>はじめに</h2>
 <p>body</p>
+<h2>環境</h2>
+<ul>
+<li>rustc
+<ul>
+<li>1.77.0 (aedd173a2 2024-03-17)</li>
+</ul>
+</li>
+<li>markdown-rs
+<ul>
+<li>1.0.0-alpha.16</li>
+</ul>
+</li>
+</ul>
+<h2>front-matter とは</h2>
+<h2>markdown-rs での front-matter の取得</h2>
+<p>hogehoge</p>
+<pre><code class="language-rust">const body = &quot;+++
+title = \&quot;Test Title\&quot;
+tags = [\&quot;rust\&quot;, \&quot;test\&quot;]
++++
+&quot;
+
+let tree = markdown::to_mdast(body, config).ok().unwrap();
+</code></pre>
+<p>HugaHuga</p>
+<pre><code class="language-rust">tree.children().into_iter().for_each(|node| {
+    for child in node.iter() {
+        match child {
+            markdown::mdast::Node::Toml(toml) =&gt; {
+                front_matter = toml.value.clone();
+            }
+            _ =&gt; {}
+        }
+    }
+});
+</code></pre>
+<h2>参考</h2>
+<ul>
+<li><a href="https://github.com/wooorm/markdown-rs">github.com/wooorm/markdown-rs</a></li>
+</ul>
 </div>
   
 
