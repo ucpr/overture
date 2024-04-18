@@ -8,6 +8,7 @@ introduction = """
 私はフロントエンドおよびバックエンドの開発に10年以上の経験があります。
               JavaScript、React、Node.jsを主に使用しています。新しいプロジェクトに挑戦することが大好きで、
               常に最新の技術を学び続けています。"""
+spotify_playlist_id = "3RktWZ6EsWwBXIgnJOm9EM"
 
 [[profile.work_experiences]]
 company = "Default Company"
@@ -22,14 +23,7 @@ tags = ["Default Tag"]
 [[profile.certificates]]
 name = "Default Certificate"
 date = "2020/12"
-#description = "Default Description"
-is_expired = false
-url = "https://example.com"
-
-[[profile.certificates]]
-name = "Default Certificate"
-date = "2020/12"
-#description = "Default Description"
+description = "Default Description"
 is_expired = false
 url = "https://example.com"
 

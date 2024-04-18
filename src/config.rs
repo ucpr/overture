@@ -47,6 +47,7 @@ pub struct Profile {
     pub introduction: String,
     pub work_experiences: Vec<WorkExperience>,
     pub certificates: Vec<Certificate>,
+    pub spotify_playlist_id: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -111,6 +112,7 @@ impl Default for Config {
                 introduction: "私はフロントエンドおよびバックエンドの開発に10年以上の経験があります。
               JavaScript、React、Node.jsを主に使用しています。新しいプロジェクトに挑戦することが大好きで、
               常に最新の技術を学び続けています。".to_string(),
+                spotify_playlist_id: Some("3RktWZ6EsWwBXIgnJOm9EM".to_string()),
                 work_experiences: vec![WorkExperience {
                     company: "Default Company".to_string(),
                     active: true,
