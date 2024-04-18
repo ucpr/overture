@@ -68,7 +68,7 @@ pub struct WorkExperienceProject {
 pub struct Certificate {
     pub name: String,
     pub date: String,
-    pub description: String,
+    pub description: Option<String>,
     pub is_expired: bool,
     pub url: Option<String>,
 }
@@ -126,7 +126,7 @@ impl Default for Config {
                 certificates: vec![Certificate {
                     name: "Default Certificate".to_string(),
                     date: "2020/12".to_string(),
-                    description: "Default Description".to_string(),
+                    description: Some("Default Description".to_string()),
                     is_expired: false,
                     url: Some("https://example.com".to_string()),
                 }],

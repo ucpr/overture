@@ -22,7 +22,14 @@ tags = ["Default Tag"]
 [[profile.certificates]]
 name = "Default Certificate"
 date = "2020/12"
-description = "Default Description"
+#description = "Default Description"
+is_expired = false
+url = "https://example.com"
+
+[[profile.certificates]]
+name = "Default Certificate"
+date = "2020/12"
+#description = "Default Description"
 is_expired = false
 url = "https://example.com"
 
