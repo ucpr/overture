@@ -77,6 +77,7 @@ impl Article {
         let default_ctx = context! {
             header => config.header,
             footer => config.footer,
+            google_analytics => config.google_analytics,
         };
 
         Ok(Article {

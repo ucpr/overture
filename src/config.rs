@@ -2,9 +2,9 @@ use serde::{Deserialize, Serialize};
 use toml;
 
 use std::fs;
+use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
-use std::fs::File;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
@@ -15,6 +15,7 @@ pub struct Config {
     pub header: Option<Header>,
     pub footer: Footer,
     pub rss: Rss,
+    pub google_analytics: Option<GoogleAnalytics>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -70,6 +71,11 @@ pub struct Certificate {
     pub description: String,
     pub is_expired: bool,
     pub url: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct GoogleAnalytics {
+    pub tracking_id: String,
 }
 
 pub fn from_file(path: PathBuf) -> Result<Config, toml::de::Error> {
@@ -134,6 +140,9 @@ impl Default for Config {
                     "https://ucpr.hatenablog.com/rss".to_string(),
                 ],
             },
+            google_analytics: Some(GoogleAnalytics {
+                tracking_id: "UA-123456789-0".to_string(),
+            }),
         }
     }
 }

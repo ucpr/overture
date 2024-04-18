@@ -46,3 +46,6 @@ name = "John Akiyama"
 
 [rss]
 urls = ["https://zenn.dev/ucpr/feed?include_scraps=1", "https://ucpr.hatenablog.com/rss"]
+
+[google_analytics]
+tracking_id = "UA-123456789-0"

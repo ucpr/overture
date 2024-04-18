@@ -27,6 +27,7 @@ impl Builder {
             description => config.description,
             header => config.header,
             footer => config.footer,
+            google_analytics => config.google_analytics,
         };
 
         let external_articles = rss::aggregate_rss_items(config.rss.urls.clone())
