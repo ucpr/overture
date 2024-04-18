@@ -2,4 +2,9 @@
   <p class="text-sm text-gray-600">
     &copy; 2024 {{ page.footer.name }}
   </p>
+  {% if page.google_analytics is not none %}
+  <p class="text-sm text-gray-600">
+    このサイトでは Google Analytics を使用しています。
+  </p>
+  {% endif %}
 </footer>

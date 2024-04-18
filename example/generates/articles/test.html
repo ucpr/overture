@@ -11,6 +11,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123456789-0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-123456789-0');
+    </script>
+    
     
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
@@ -27,12 +35,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
   var h2 = document.querySelectorAll('body main h2');
   h2.forEach(function(element) {
-    element.classList.add('text-lg','font-bold', 'pt-2');
+    element.classList.add('text-lg','font-bold', 'py-4');
   });
 
   var p = document.querySelectorAll('body main p');
   p.forEach(function(element) {
-    element.classList.add('text-sm','text-gray-600', 'pt-2');
+    element.classList.add('text-sm','text-gray-600', 'pb-2');
   });
 
   var a = document.querySelectorAll('body main a');
@@ -45,9 +53,19 @@ document.addEventListener("DOMContentLoaded", function() {
     element.classList.add('list-disc','list-outside','pl-4');
   });
 
+  var li = document.querySelectorAll('body main li');
+  li.forEach(function(element) {
+    element.classList.add('text-sm','text-gray-600', 'pt-1');
+  });
+
   var pre = document.querySelectorAll('body main pre');
   pre.forEach(function(element) {
-    element.classList.add('pt-2','text-sm');
+    element.classList.add('py-4','text-sm');
+  });
+
+  var code = document.querySelectorAll('body main code');
+  code.forEach(function(element) {
+    element.classList.add('hljs');
   });
 });
 </script>
@@ -101,6 +119,11 @@ h4:before {
   <p class="text-sm text-gray-600">
     &copy; 2024 John Akiyama
   </p>
+  
+  <p class="text-sm text-gray-600">
+    このサイトでは Google Analytics を使用しています。
+  </p>
+  
 </footer>
   </body>
 </html>
