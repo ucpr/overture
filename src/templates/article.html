@@ -22,12 +22,17 @@ document.addEventListener("DOMContentLoaded", function() {
 
   var h2 = document.querySelectorAll('body main h2');
   h2.forEach(function(element) {
-    element.classList.add('text-lg','font-bold', 'py-4');
+    element.classList.add('text-lg','font-bold', 'py-2');
+  });
+
+  var h3 = document.querySelectorAll('body main h3');
+  h3.forEach(function(element) {
+    element.classList.add('text-base','font-bold', 'py-2');
   });
 
   var p = document.querySelectorAll('body main p');
   p.forEach(function(element) {
-    element.classList.add('text-sm','text-gray-600', 'pb-2');
+    element.classList.add('text-sm','text-gray-600', 'py-2');
   });
 
   var a = document.querySelectorAll('body main a');
@@ -38,6 +43,11 @@ document.addEventListener("DOMContentLoaded", function() {
   var ul = document.querySelectorAll('body main ul');
   ul.forEach(function(element) {
     element.classList.add('list-disc','list-outside','pl-4');
+  });
+
+  var ol = document.querySelectorAll('body main ol');
+  ol.forEach(function(element) {
+    element.classList.add('list-decimal','list-outside','pl-4');
   });
 
   var li = document.querySelectorAll('body main li');
@@ -54,7 +64,38 @@ document.addEventListener("DOMContentLoaded", function() {
   code.forEach(function(element) {
     element.classList.add('hljs');
   });
-});
+
+  var blockquote = document.querySelectorAll('body main blockquote');
+  blockquote.forEach(function(element) {
+    element.classList.add('text-sm', 'italic', 'font-semibold', 'text-gray-600', 'border-l-4', 'border-gray-400', 'pl-3', 'py-2');
+  });
+
+  var table = document.querySelectorAll('body main table');
+  table.forEach(function(element) {
+    element.classList.add('w-full','text-sm','text-left','rtl:text-right', 'text-gray-500', 'py-2');
+  });
+
+  var thead = document.querySelectorAll('body main table thead');
+  thead.forEach(function(element) {
+    element.classList.add('text-xs','text-gray-700','uppercase','bg-gray-50');
+  });
+
+  var thead_th = document.querySelectorAll('body main table thead tr th');
+  thead_th.forEach(function(element) {
+    element.classList.add('px-6','py-3', 'text-xs');
+    element.setAttribute('scope', 'col');
+  });
+
+  var tbody_td = document.querySelectorAll('body main table tbody tr td');
+  tbody_td.forEach(function(element) {
+    element.classList.add('px-6','py-3', 'text-xs');
+  });
+
+  var tbody_tr = document.querySelectorAll('body main table tbody tr');
+  tbody_tr.forEach(function(element) {
+      element.classList.add('border-b');
+    });
+  });
 {% endblock %}
 {% block head %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">

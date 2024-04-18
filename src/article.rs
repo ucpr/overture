@@ -95,11 +95,11 @@ impl Article {
             parse: markdown::ParseOptions {
                 constructs: markdown::Constructs {
                     frontmatter: true,
-                    ..Default::default()
+                    ..markdown::Constructs::gfm()
                 },
-                ..Default::default()
+                ..markdown::ParseOptions::gfm()
             },
-            ..Default::default()
+            ..markdown::Options::gfm()
         };
 
         let mut body = self.raw_body.clone();

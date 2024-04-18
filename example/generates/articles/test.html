@@ -36,12 +36,17 @@ document.addEventListener("DOMContentLoaded", function() {
 
   var h2 = document.querySelectorAll('body main h2');
   h2.forEach(function(element) {
-    element.classList.add('text-lg','font-bold', 'py-4');
+    element.classList.add('text-lg','font-bold', 'py-2');
+  });
+
+  var h3 = document.querySelectorAll('body main h3');
+  h3.forEach(function(element) {
+    element.classList.add('text-base','font-bold', 'py-2');
   });
 
   var p = document.querySelectorAll('body main p');
   p.forEach(function(element) {
-    element.classList.add('text-sm','text-gray-600', 'pb-2');
+    element.classList.add('text-sm','text-gray-600', 'py-2');
   });
 
   var a = document.querySelectorAll('body main a');
@@ -52,6 +57,11 @@ document.addEventListener("DOMContentLoaded", function() {
   var ul = document.querySelectorAll('body main ul');
   ul.forEach(function(element) {
     element.classList.add('list-disc','list-outside','pl-4');
+  });
+
+  var ol = document.querySelectorAll('body main ol');
+  ol.forEach(function(element) {
+    element.classList.add('list-decimal','list-outside','pl-4');
   });
 
   var li = document.querySelectorAll('body main li');
@@ -68,7 +78,38 @@ document.addEventListener("DOMContentLoaded", function() {
   code.forEach(function(element) {
     element.classList.add('hljs');
   });
-});
+
+  var blockquote = document.querySelectorAll('body main blockquote');
+  blockquote.forEach(function(element) {
+    element.classList.add('text-sm', 'italic', 'font-semibold', 'text-gray-600', 'border-l-4', 'border-gray-400', 'pl-3', 'py-2');
+  });
+
+  var table = document.querySelectorAll('body main table');
+  table.forEach(function(element) {
+    element.classList.add('w-full','text-sm','text-left','rtl:text-right', 'text-gray-500', 'py-2');
+  });
+
+  var thead = document.querySelectorAll('body main table thead');
+  thead.forEach(function(element) {
+    element.classList.add('text-xs','text-gray-700','uppercase','bg-gray-50');
+  });
+
+  var thead_th = document.querySelectorAll('body main table thead tr th');
+  thead_th.forEach(function(element) {
+    element.classList.add('px-6','py-3', 'text-xs');
+    element.setAttribute('scope', 'col');
+  });
+
+  var tbody_td = document.querySelectorAll('body main table tbody tr td');
+  tbody_td.forEach(function(element) {
+    element.classList.add('px-6','py-3', 'text-xs');
+  });
+
+  var tbody_tr = document.querySelectorAll('body main table tbody tr');
+  tbody_tr.forEach(function(element) {
+      element.classList.add('border-b');
+    });
+  });
 </script>
     <style>
       body {
@@ -109,8 +150,151 @@ h4:before {
     <main class="p-4">
       
   
-    <h1># Test Article</h1><div><h2>h2</h2>
+    <h1># Test Article</h1><div><h2>blockquote</h2>
 <p>body</p>
+<blockquote>
+<p>こんにちは。これはぶろっくくおーとです。</p>
+</blockquote>
+<p>日本語表示。</p>
+<blockquote>
+<p>Hello. This is a block quote.</p>
+</blockquote>
+<p>英語表示。</p>
+<blockquote>
+<p>こんにちは。This is a block quote.</p>
+</blockquote>
+<p>日本語と英語表示。</p>
+<blockquote>
+<p>Hello. This is a block quote.</p>
+<blockquote>
+<p>こんにちは。これはぶろっくくおーとです。</p>
+</blockquote>
+</blockquote>
+<p>二重引用</p>
+<h2>blockquote with highlight (未対応)</h2>
+<blockquote>
+<p>[!NOTE]
+<code>NOTE</code> の例</p>
+</blockquote>
+<p>未対応</p>
+<blockquote>
+<p>[!TIP]
+<code>TIP</code> の例</p>
+</blockquote>
+<blockquote>
+<p>[!IMPORTANT]
+<code>IMPORTANT</code> の例</p>
+</blockquote>
+<p>並ぶと padding 入ってないのでラインがくっつく</p>
+<blockquote>
+<p>[!WARNING]
+<code>WARNING</code> の例</p>
+</blockquote>
+<blockquote>
+<p>[!CAUTION]
+<code>CAUTION</code> の例</p>
+</blockquote>
+<h2>pre &amp; codeblock</h2>
+<pre><code class="language-rust">const body = &quot;---
+title: Test Title
+tags:
+  - rust
+  - test
+---&quot;
+
+let tree = markdown::to_mdast(body, config).ok().unwrap();
+let mut front_matter = String::new();
+tree.children().into_iter().for_each(|node| {
+    for child in node.iter() {
+        match child {
+            markdown::mdast::Node::Yaml(yaml) =&gt; {
+                front_matter = yaml.value.clone();
+            }
+            _ =&gt; {}
+        }
+    }
+});
+</code></pre>
+<h2>code</h2>
+<p><code>Hello, World!</code> はこんにちは世界という意味です。</p>
+<h2>ul &amp; li</h2>
+<ul>
+<li>item1
+<ul>
+<li>item2</li>
+</ul>
+</li>
+<li>item3
+<ul>
+<li>item4</li>
+<li>item5
+<ul>
+<li>item6</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2>ol &amp; li</h2>
+<ol>
+<li>item1
+<ol>
+<li>item2</li>
+</ol>
+</li>
+<li>item3
+<ol>
+<li>item4</li>
+<li>item5
+<ol>
+<li>item6</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h2>em</h2>
+<p><em>italic で文字を書いてみるよ。</em></p>
+<h2>strong</h2>
+<p><strong>bold で文字を書いてみるよ。</strong></p>
+<h2>em &amp; strong</h2>
+<p><em><strong>italic と bold を組み合わせて文字を書いてみるよ。</strong></em></p>
+<h2>strike</h2>
+<p><del>strike で文字を書いてみるよ。</del></p>
+<h2>hr</h2>
+<p><code>---</code> で水平線を引く。</p>
+<hr />
+<p><code>***</code> で水平線を引く。</p>
+<hr />
+<h2>link</h2>
+<p><a href="https://www.google.com">Google</a></p>
+<h3>定義参照リンク</h3>
+<p><a href="https://www.google.com">Google</a></p>
+<h2>コメント</h2>
+&lt;!-- コメント --&gt;
+<p>これは使えないぽい</p>
+<h2>GFM: Table</h2>
+<table>
+<thead>
+<tr>
+<th>header1</th>
+<th>header2</th>
+<th>header3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>align left</td>
+<td>align right</td>
+<td>align center</td>
+</tr>
+<tr>
+<td>a</td>
+<td>b</td>
+<td>c</td>
+</tr>
+</tbody>
+</table>
 </div>
   
 
