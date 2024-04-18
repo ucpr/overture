@@ -19,7 +19,7 @@ impl ToString for Source {
         match self {
             Source::Unknown => "Unknown".to_string(),
             Source::Zenn => "Zenn".to_string(),
-            Source::ZennScrap => "ZennScrap".to_string(),
+            Source::ZennScrap => "Zenn Scraps".to_string(),
             Source::HatenaBlog => "HatenaBlog".to_string(),
         }
     }
