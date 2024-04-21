@@ -75,6 +75,7 @@ impl Article {
         let config_path = PathBuf::from("config.toml");
         let config = config::from_file(config_path).unwrap();
         let default_ctx = context! {
+            url => config.url,
             header => config.header,
             footer => config.footer,
             google_analytics => config.google_analytics,
@@ -114,10 +115,12 @@ impl Article {
         let html = self.build();
 
         let template = self.env.get_template("article.html").unwrap();
+        let path = self.file_name.split('.').next().unwrap();
         let page = context! {
             ..self.default_ctx.clone(),
             ..context!{
                 content => html,
+                url_path => format!("/articles/{}", path),
                 title => self.options.title,
                 description => self.options.description,
             },

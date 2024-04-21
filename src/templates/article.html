@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   var a = document.querySelectorAll('body main a');
   a.forEach(function(element) {
-    element.classList.add('text-sm','text-blue-600','hover:text-blue-800','pr-4');
+    element.classList.add('text-sm','text-blue-600','hover:text-blue-800');
   });
 
   var ul = document.querySelectorAll('body main ul');
@@ -102,6 +102,14 @@ document.addEventListener("DOMContentLoaded", function() {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/rust.min.js"></script>
+<meta property="og:url" content="{{ page.url }}{{ page.url_path }}" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="{{ page.title }}" />
+<meta property="og:description" content="{{ page.description }}" />
+<meta property="og:site_name" content="{{ page.title }}" />
+<meta property="og:image" content="https://ogpgen.ucpr.workers.dev/?text={{ page.title }}&author=@ucpr&title=ucpr.dev" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@u_chi_ha_ra_" />
 {% endblock %}
 {% block body %}
   {% autoescape false %}
