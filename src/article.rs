@@ -108,7 +108,7 @@ impl Article {
             body = markdown::to_html_with_options(&body, &opts).unwrap();
         }
 
-        format!("<h1># {}</h1><div>{}</div>", self.options.title, body)
+        format!("<h1>{}</h1><div>{}</div>", self.options.title, body)
     }
 
     fn render(&self) -> String {

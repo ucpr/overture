@@ -2,6 +2,9 @@
 {% block title %}{{ page.title }}{% endblock %}
 {% block description %}{{ page.description }}{% endblock %}
 {% block styles %}
+h1:before {
+  content: "# ";
+}
 h2:before {
   content: "## ";
 }
@@ -17,7 +20,7 @@ hljs.highlightAll();
 document.addEventListener("DOMContentLoaded", function() {
   var h1 = document.querySelectorAll('body main h1');
   h1.forEach(function(element) {
-    element.classList.add('text-xl','font-bold');
+    element.classList.add('text-xl','font-bold', 'py-2');
   });
 
   var h2 = document.querySelectorAll('body main h2');
@@ -28,6 +31,11 @@ document.addEventListener("DOMContentLoaded", function() {
   var h3 = document.querySelectorAll('body main h3');
   h3.forEach(function(element) {
     element.classList.add('text-base','font-bold', 'py-2');
+  });
+
+  var h4 = document.querySelectorAll('body main h4');
+  h4.forEach(function(element) {
+    element.classList.add('text-sm','font-bold', 'py-2');
   });
 
   var p = document.querySelectorAll('body main p');
