@@ -13,7 +13,7 @@ pub struct Config {
     pub url: String,
 
     pub profile: Profile,
-    pub header: Option<Header>,
+    pub header: Header,
     pub footer: Footer,
     pub rss: Rss,
     pub google_analytics: Option<GoogleAnalytics>,
@@ -93,7 +93,7 @@ impl Default for Config {
             title: "Default Title".to_string(),
             description: "Default Description".to_string(),
             url: "https://example.com".to_string(),
-            header: Some(Header {
+            header: Header {
                 title: "Default Header Title".to_string(),
                 links: vec![
                     HeaderLink {
@@ -109,7 +109,7 @@ impl Default for Config {
                         url: "/articles".to_string(),
                     },
                 ],
-            }),
+            },
             profile: Profile {
                 name: "Default Name".to_string(),
                 icon_url: "https://via.placeholder.com/200".to_string(),

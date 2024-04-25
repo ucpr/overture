@@ -1,11 +1,8 @@
-use std::path::PathBuf;
-
 use markdown;
 use minijinja::context;
 use serde::Deserialize;
 use xxhash_rust::const_xxh3::xxh3_64 as const_xxh3;
 
-use crate::config;
 use crate::rss::{Item, Source};
 
 #[derive(Debug, Deserialize)]
@@ -19,15 +16,14 @@ pub struct Options {
 pub struct Article {
     raw_body: String,
     options: Options,
-    pub ext: String,
     pub file_name: String,
-
-    env: minijinja::Environment<'static>,
-    default_ctx: minijinja::Value,
 }
 
 pub struct Articles {
     articles: Vec<Article>,
+
+    env: minijinja::Environment<'static>,
+    default_ctx: minijinja::Value,
 }
 
 impl Article {
@@ -57,37 +53,14 @@ impl Article {
     }
 
     pub fn from_file(path: &str) -> Result<Article, std::io::Error> {
-        let ext = path.split('.').last().unwrap().to_string();
         let file_name = path.split('/').last().unwrap().to_string();
         let raw_body = std::fs::read_to_string(path)?;
         let options = Article::options(&raw_body).unwrap();
 
-        let mut env = minijinja::Environment::new();
-        #[cfg(feature = "bundled")]
-        {
-            minijinja_embed::load_templates!(&mut env);
-        }
-        #[cfg(not(feature = "bundled"))]
-        {
-            env.set_loader(minijinja::path_loader("./src/templates"));
-        }
-
-        let config_path = PathBuf::from("config.toml");
-        let config = config::from_file(config_path).unwrap();
-        let default_ctx = context! {
-            url => config.url,
-            header => config.header,
-            footer => config.footer,
-            google_analytics => config.google_analytics,
-        };
-
         Ok(Article {
-            ext,
             file_name,
             raw_body,
             options,
-            env,
-            default_ctx,
         })
     }
 
@@ -104,34 +77,41 @@ impl Article {
         };
 
         let mut body = self.raw_body.clone();
-        if self.ext == "md" {
-            body = markdown::to_html_with_options(&body, &opts).unwrap();
-        }
+        body = markdown::to_html_with_options(&body, &opts).unwrap();
 
         format!("<h1>{}</h1><div>{}</div>", self.options.title, body)
     }
 
-    fn render(&self) -> String {
+    fn render(
+        &self,
+        env: minijinja::Environment<'static>,
+        default_ctx: minijinja::Value,
+    ) -> String {
         let html = self.build();
 
-        let template = self.env.get_template("article.html").unwrap();
+        let template = env.get_template("article.html").unwrap();
         let path = self.file_name.split('.').next().unwrap();
         let page = context! {
-            ..self.default_ctx.clone(),
             ..context!{
                 content => html,
                 url_path => format!("/articles/{}", path),
                 title => self.options.title,
                 description => self.options.description,
             },
+            ..default_ctx.clone(),
         };
         let content = template.render(context!(page)).unwrap();
 
         content
     }
 
-    pub fn save(&self, path: &str) -> Result<(), std::io::Error> {
-        let html = self.render();
+    pub fn save(
+        &self,
+        env: minijinja::Environment<'static>,
+        default_ctx: minijinja::Value,
+        path: &str,
+    ) -> Result<(), std::io::Error> {
+        let html = self.render(env, default_ctx);
         std::fs::write(path, html)
     }
 
@@ -142,7 +122,7 @@ impl Article {
 }
 
 impl Articles {
-    pub fn new() -> Articles {
+    pub fn new(env: minijinja::Environment<'static>, default_ctx: minijinja::Value) -> Articles {
         let mut articles = Vec::new();
 
         let paths = std::fs::read_dir("articles").unwrap();
@@ -154,7 +134,11 @@ impl Articles {
             articles.push(article);
         }
 
-        Articles { articles }
+        Articles {
+            articles,
+            env,
+            default_ctx,
+        }
     }
 
     pub fn save(&self) -> Result<Vec<Item>, std::io::Error> {
@@ -165,7 +149,7 @@ impl Articles {
             let name = name.split('.').next().unwrap();
 
             let path = format!("generates/articles/{}.html", name);
-            article.save(&path)?;
+            article.save(self.env.clone(), self.default_ctx.clone(), &path)?;
 
             items.push(Item {
                 title: article.options.title.clone(),
@@ -195,13 +179,10 @@ body
 
     #[test]
     fn test_build() {
-        let env = minijinja::Environment::new();
-        let default_ctx = context! {};
         let article = {
             let title = "Test Article".to_string();
             let description = "Test article description".to_string();
             let raw_body = BODY.to_string();
-            let ext = "md".to_string();
             let options = Options {
                 title,
                 description,
@@ -209,12 +190,9 @@ body
                 tags: vec!["test".to_string(), "article".to_string()],
             };
             Article {
-                ext,
                 file_name: "test.md".to_string(),
                 raw_body,
                 options,
-                env,
-                default_ctx,
             }
         };
 
