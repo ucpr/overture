@@ -22,12 +22,11 @@ impl Project {
     }
 
     pub fn create(&self) -> std::io::Result<()> {
-        let root = path::PathBuf::from(".");
-        fs::create_dir_all(root.join("articles"))?;
-        fs::create_dir_all(root.join("generates/articles"))?;
-        fs::create_dir_all(root.join("generates/statics"))?;
-        fs::create_dir_all(root.join("statics"))?;
-        let _ = Config::default().to_file(root.join("config.toml"));
+        fs::create_dir_all(self.root.join("articles"))?;
+        fs::create_dir_all(self.root.join("generates/articles"))?;
+        fs::create_dir_all(self.root.join("generates/statics"))?;
+        fs::create_dir_all(self.root.join("statics"))?;
+        let _ = Config::default().to_file(self.root.join("config.toml"));
 
         Ok(())
     }
