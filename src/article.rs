@@ -218,7 +218,7 @@ body
             }
         };
 
-        let want = "<h1># Test Article</h1><div><h2>h2</h2>\n<p>body</p>\n</div>";
+        let want = "<h1>Test Article</h1><div><h2>h2</h2>\n<p>body</p>\n</div>";
         assert_eq!(article.build(), want.to_string());
     }
 }
