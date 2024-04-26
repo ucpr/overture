@@ -2,7 +2,6 @@ use serde::{Deserialize, Serialize};
 use toml;
 
 use std::fs;
-use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
 
@@ -158,7 +157,7 @@ impl Default for Config {
 impl Config {
     pub fn to_file(&self, path: PathBuf) -> Result<(), ()> {
         let toml = toml::to_string(self).unwrap();
-        let mut file = File::create(path).unwrap();
+        let mut file = fs::File::create(path).unwrap();
         file.write_all(toml.as_bytes()).unwrap();
 
         Ok(())
