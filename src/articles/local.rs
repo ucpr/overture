@@ -21,7 +21,7 @@ pub struct Options {
 
 pub struct LocalArticle {
     pub raw_body: String,
-    pub file_name: String,
+    pub raw_file_name: String,
     pub pub_date: DateTime<Tz>,
     pub options: Options,
 }
@@ -53,8 +53,12 @@ impl LocalArticle {
         toml::from_str(front_matter)
     }
 
+    pub fn url_path(&self) -> String {
+        format!("/articles/{}", self.raw_file_name.split('.').next().unwrap())
+    }
+
     pub fn from_file(path: &str) -> Result<LocalArticle, std::io::Error> {
-        let file_name = path.split('/').last().unwrap().to_string();
+        let raw_file_name = path.split('/').last().unwrap().to_string();
         let raw_body = std::fs::read_to_string(path)?;
         let options = LocalArticle::options(&raw_body).unwrap();
         let pub_date = DateTime::parse_from_rfc3339(&options.date)
@@ -62,7 +66,7 @@ impl LocalArticle {
             .with_timezone(&Tokyo);
 
         Ok(LocalArticle {
-            file_name,
+            raw_file_name,
             raw_body,
             options,
             pub_date,
@@ -96,7 +100,7 @@ impl LocalArticle {
         let html = self.build();
 
         let template = env.get_template("article.html").unwrap();
-        let base = self.file_name.split('.').next().unwrap();
+        let base = self.raw_file_name.split('.').next().unwrap();
         let page = context! {
             ..context!{
                 content => html,
@@ -142,7 +146,7 @@ impl LocalArticles {
         for article in &self.articles {
             let path = format!(
                 "generates/articles/{}.html",
-                article.file_name.split('.').next().unwrap()
+                article.raw_file_name.split('.').next().unwrap()
             );
             article.save(env, default_ctx, &path).unwrap();
         }
@@ -155,7 +159,7 @@ impl LocalArticles {
             items.push(
                 rss::ItemBuilder::default()
                     .title(article.options.title.clone())
-                    .link(format!("/articles/{}", article.file_name))
+                    .link(format!("/articles/{}", article.raw_file_name))
                     .pub_date(article.pub_date.to_rfc2822())
                     .description(article.options.description.clone())
                     .build(),

@@ -1,5 +1,7 @@
 use std::error::Error;
 
+use chrono::DateTime;
+use chrono_tz::{Asia::Tokyo, Tz};
 use minijinja;
 use serde::Serialize;
 
@@ -28,6 +30,7 @@ impl ToString for Source {
     }
 }
 
+#[derive(Debug, Serialize)]
 pub struct Article {
     pub title: String,
     pub url: String,
@@ -56,6 +59,13 @@ impl Articles {
         })
     }
 
+    fn format_jst_pub_date(&self, pub_date: DateTime<Tz>) -> String {
+        pub_date
+            .with_timezone(&Tokyo)
+            .format("%Y/%m/%d")
+            .to_string()
+    }
+
     pub fn build_articles(&self) -> Result<(), ()> {
         self.local_articles
             .build_articles(&self.env, &self.default_ctx)
@@ -71,9 +81,9 @@ impl Articles {
         for article in &self.local_articles.articles {
             articles.push(Article {
                 title: article.options.title.clone(),
-                url: format!("/articles/{}", article.file_name),
+                url: article.url_path(),
                 source: Source::Local,
-                pub_date: article.pub_date.to_rfc2822(),
+                pub_date: self.format_jst_pub_date(article.pub_date),
             });
         }
 
@@ -82,7 +92,7 @@ impl Articles {
                 title: article.title.clone(),
                 url: article.url.clone(),
                 source: article.source(),
-                pub_date: article.pub_date.to_rfc2822(),
+                pub_date: self.format_jst_pub_date(article.pub_date),
             });
         }
 

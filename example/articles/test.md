@@ -1,7 +1,7 @@
 +++
 title = "Test Article"
 description = "Test Description"
-date = "2024/04/18"
+date = "2024-04-18T00:00:00+09:00"
 tags = ["test", "article"]
 +++
 

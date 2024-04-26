@@ -1,3 +1,4 @@
+use std::error::Error;
 use std::fs;
 use std::io::Write;
 use std::path;
@@ -5,20 +6,18 @@ use std::path;
 use fs_extra::dir;
 use minijinja::context;
 
-use crate::article;
+use crate::articles::article;
 use crate::config;
-use crate::rss;
 
 pub struct Builder {
     env: minijinja::Environment<'static>,
     config: config::Config,
     default_ctx: minijinja::Value,
-
-    articles: Vec<rss::Item>,
+    articles: article::Articles,
 }
 
 impl Builder {
-    pub async fn new() -> Self {
+    pub async fn new() -> Result<Self, Box<dyn Error>> {
         let mut env = minijinja::Environment::new();
         #[cfg(feature = "bundled")]
         {
@@ -39,29 +38,20 @@ impl Builder {
             google_analytics => config.google_analytics,
         };
 
-        let external_articles = rss::aggregate_rss_items(config.rss.external_rss_links.clone())
-            .await
-            .unwrap();
-        let art = article::Articles::new(env.clone(), default_ctx.clone());
-        let mut articles = art.save().unwrap(); // save original articles
+        /* 目印 */
+        let articles = article::Articles::new(
+            config.rss.external_rss_links.clone(),
+            env.clone(),
+            default_ctx.clone(),
+        )
+        .await?;
 
-        let rss_creator = rss::RSS::new(
-            config.rss.title.clone(),
-            config.rss.description.clone(),
-            config.url.clone(),
-            articles.clone(),
-        );
-        rss_creator.save("./generates/rss.xml").unwrap();
-
-        articles.extend(external_articles.clone());
-        articles.sort_by(|a, b| b.pub_date.cmp(&a.pub_date));
-
-        Builder {
+        Ok(Builder {
             env,
             config,
             default_ctx,
             articles,
-        }
+        })
     }
 
     fn context(&self, ctx: minijinja::Value) -> minijinja::Value {
@@ -71,20 +61,31 @@ impl Builder {
         }
     }
 
-    fn build_template(&self, template_name: &str, ctx: minijinja::Value) -> Result<String, minijinja::Error>{
+    fn build_template(
+        &self,
+        template_name: &str,
+        ctx: minijinja::Value,
+    ) -> Result<String, minijinja::Error> {
         let template = self.env.get_template(template_name)?;
         let page = self.context(ctx);
         template.render(context!(page))
     }
 
     fn build_index(&self) -> Result<(), ()> {
-        let content = self.build_template("index.html", context! {
-            profile => self.config.profile,
-            articles => {
-                let limit = self.articles.len().min(5);
-                &self.articles[..limit]
-            },
-        }).unwrap();
+        let articles = self.articles.aggregate_articles().unwrap();
+
+        let content = self
+            .build_template(
+                "index.html",
+                context! {
+                    profile => self.config.profile,
+                    articles => {
+                        let limit = articles.len().min(5);
+                        &articles[..limit]
+                    },
+                },
+            )
+            .unwrap();
 
         // save file
         let mut file = fs::File::create("./generates/index.html").unwrap();
@@ -93,9 +94,16 @@ impl Builder {
     }
 
     fn build_articles(&self) -> Result<(), ()> {
-        let content = self.build_template("articles.html", context! {
-            articles => self.articles,
-        }).unwrap();
+        let articles = self.articles.aggregate_articles().unwrap();
+
+        let content = self
+            .build_template(
+                "articles.html",
+                context! {
+                    articles => articles,
+                },
+            )
+            .unwrap();
 
         // save file
         let mut file = fs::File::create("./generates/articles.html").unwrap();
@@ -104,10 +112,15 @@ impl Builder {
     }
 
     fn build_about(&self) -> Result<(), ()> {
-        let content = self.build_template("about.html", context! {
-            profile => self.config.profile,
-            articles => self.articles,
-        }).unwrap();
+        let content = self
+            .build_template(
+                "about.html",
+                context! {
+                    profile => self.config.profile,
+                    // articles => self.articles,
+                },
+            )
+            .unwrap();
 
         // save file
         let mut file = fs::File::create("./generates/about.html").unwrap();
@@ -132,6 +145,8 @@ impl Builder {
 
     pub fn build(&self) -> Result<(), ()> {
         self.build_index().unwrap();
+        self.articles.build_articles().unwrap();
+        self.articles.generate_rss(&self.config.rss).unwrap();
         self.build_articles().unwrap();
         self.build_about().unwrap();
         self.build_statics().unwrap();

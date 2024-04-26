@@ -35,7 +35,13 @@ async fn main() {
     let cli = Cli::parse();
     match cli.command {
         Commands::Build => {
-            let builder = builder::Builder::new().await;
+            let builder = match builder::Builder::new().await {
+                Ok(b) => b,
+                Err(_) => {
+                    println!("Error creating builder");
+                    return;
+                }
+            };
 
             match builder.build() {
                 Ok(_) => println!("Build successful"),
@@ -44,7 +50,13 @@ async fn main() {
         }
 
         Commands::Serve { port } => {
-            let builder = builder::Builder::new().await;
+            let builder = match builder::Builder::new().await {
+                Ok(b) => b,
+                Err(_) => {
+                    println!("Error creating builder");
+                    return;
+                }
+            };
 
             match builder.build() {
                 Ok(_) => {
