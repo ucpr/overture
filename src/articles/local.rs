@@ -1,9 +1,8 @@
+use chrono::DateTime;
+use chrono_tz::{Asia::Tokyo, Tz};
 use markdown;
 use minijinja::context;
 use serde::Deserialize;
-use xxhash_rust::const_xxh3::xxh3_64 as const_xxh3;
-use chrono::DateTime;
-use chrono_tz::{Asia::Tokyo, Tz};
 
 #[derive(Debug, Deserialize)]
 pub struct Options {
@@ -51,7 +50,9 @@ impl LocalArticle {
         let file_name = path.split('/').last().unwrap().to_string();
         let raw_body = std::fs::read_to_string(path)?;
         let options = LocalArticle::options(&raw_body).unwrap();
-        let pub_date = DateTime::parse_from_rfc3339(&options.date).unwrap().with_timezone(&Tokyo);
+        let pub_date = DateTime::parse_from_rfc3339(&options.date)
+            .unwrap()
+            .with_timezone(&Tokyo);
 
         Ok(LocalArticle {
             file_name,
@@ -110,10 +111,5 @@ impl LocalArticle {
     ) -> Result<(), std::io::Error> {
         let html = self.render(env, default_ctx);
         std::fs::write(path, html)
-    }
-
-    #[allow(dead_code)]
-    fn hash(&self) -> u64 {
-        const_xxh3(self.build().as_bytes())
     }
 }

@@ -1,7 +1,6 @@
 use markdown;
 use minijinja::context;
 use serde::Deserialize;
-use xxhash_rust::const_xxh3::xxh3_64 as const_xxh3;
 
 use crate::rss::{Item, Source};
 
@@ -113,11 +112,6 @@ impl Article {
     ) -> Result<(), std::io::Error> {
         let html = self.render(env, default_ctx);
         std::fs::write(path, html)
-    }
-
-    #[allow(dead_code)]
-    fn hash(&self) -> u64 {
-        const_xxh3(self.build().as_bytes())
     }
 }
 
