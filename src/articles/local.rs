@@ -161,7 +161,8 @@ impl LocalArticles {
         let base_url = url::Url::parse(&config.url)?;
 
         for article in &self.articles {
-            let link = base_url.join(&format!("/articles/{}", article.raw_file_name))?;
+            let path = article.raw_file_name.split('.').next().unwrap();
+            let link = base_url.join(&format!("/articles/{}", path))?;
             items.push(
                 rss::ItemBuilder::default()
                     .title(article.options.title.clone())
