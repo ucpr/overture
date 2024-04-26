@@ -54,7 +54,10 @@ impl LocalArticle {
     }
 
     pub fn url_path(&self) -> String {
-        format!("/articles/{}", self.raw_file_name.split('.').next().unwrap())
+        format!(
+            "/articles/{}",
+            self.raw_file_name.split('.').next().unwrap()
+        )
     }
 
     pub fn from_file(path: &str) -> Result<LocalArticle, std::io::Error> {
@@ -155,11 +158,14 @@ impl LocalArticles {
 
     pub fn generate_rss(&self, config: &Rss) -> Result<(), Box<dyn Error>> {
         let mut items = Vec::new();
+        let base_url = url::Url::parse(&config.url)?;
+
         for article in &self.articles {
+            let link = base_url.join(&format!("/articles/{}", article.raw_file_name))?;
             items.push(
                 rss::ItemBuilder::default()
                     .title(article.options.title.clone())
-                    .link(format!("/articles/{}", article.raw_file_name))
+                    .link(link.to_string())
                     .pub_date(article.pub_date.to_rfc2822())
                     .description(article.options.description.clone())
                     .build(),
