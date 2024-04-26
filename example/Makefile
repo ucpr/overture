@@ -5,5 +5,9 @@ init:
 build:
 	cargo run --features=bundled build
 
+hot_build:
+	find ../src/**/* | entr cargo run --features=bundled build
+
 serve:
 	cargo run --features=bundled serve --port=8000
+

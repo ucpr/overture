@@ -7,15 +7,15 @@
     <li class="pb-2">
       <div class="flex">
         <p class="text-xs text-gray-700">{{ article.pub_date }}</p>
-        {% if article.source != "Unknown" %}
+        {% if article.source == "Zenn" or article.source == "ZennScraps" %}
         <span class="pl-2" />
         <p class="text-xs px-1 text-white text-bold bg-sky-400 rounded border">{{ article.source }}</p>
         {% endif %}
       </div>
-      {% if article.source == "Unknown" %}
-      <a href="{{ article.link }}" class="text-blue-600 hover:text-blue-800">
+      {% if article.source == "Local" %}
+      <a href="{{ article.url }}" class="text-blue-600 hover:text-blue-800">
         {% else %}
-        <a href="{{ article.link }}" target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-800">
+        <a href="{{ article.url }}" target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-800">
           {% endif %}
           {{ article.title }}
         </a>
