@@ -57,6 +57,9 @@ impl RSS {
 
             for item in self.items.iter() {
                 let pub_date = item.pub_date.to_string() + " 00:00:00 +0900";
+                let pub_date = DateTime::parse_from_str(&pub_date, "%Y/%m/%d %H:%M:%S %z")
+                    .unwrap()
+                    .to_rfc2822();
 
                 let title = item.title.to_string();
                 let base_url = url::Url::parse(&self.url).unwrap();
