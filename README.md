@@ -22,12 +22,6 @@ $ overture build
 $ overture serve
 ```
 
-### Clear caches
-
-```sh
-$ overture clear
-```
-
 ## License
 
 MIT License
