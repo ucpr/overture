@@ -1,8 +1,15 @@
+use std::error::Error;
+use std::fs;
+use std::io::prelude::*;
+
 use chrono::DateTime;
 use chrono_tz::{Asia::Tokyo, Tz};
 use markdown;
 use minijinja::context;
+use rss::ChannelBuilder;
 use serde::Deserialize;
+
+use crate::config::Rss;
 
 #[derive(Debug, Deserialize)]
 pub struct Options {
@@ -80,19 +87,20 @@ impl LocalArticle {
         format!("<h1>{}</h1><div>{}</div>", self.options.title, body)
     }
 
-    fn render(
+    pub fn save(
         &self,
-        env: minijinja::Environment<'static>,
-        default_ctx: minijinja::Value,
-    ) -> String {
+        env: &minijinja::Environment<'static>,
+        default_ctx: &minijinja::Value,
+        path: &str,
+    ) -> Result<(), std::io::Error> {
         let html = self.build();
 
         let template = env.get_template("article.html").unwrap();
-        let path = self.file_name.split('.').next().unwrap();
+        let base = self.file_name.split('.').next().unwrap();
         let page = context! {
             ..context!{
                 content => html,
-                url_path => format!("/articles/{}", path),
+                url_path => format!("/articles/{}", base),
                 title => self.options.title,
                 description => self.options.description,
             },
@@ -100,16 +108,68 @@ impl LocalArticle {
         };
         let content = template.render(context!(page)).unwrap();
 
-        content
+        std::fs::write(path, content)
+    }
+}
+
+pub struct LocalArticles {
+    pub articles: Vec<LocalArticle>,
+}
+
+impl LocalArticles {
+    pub fn new() -> Result<Self, Box<dyn Error>> {
+        let mut articles = Vec::new();
+
+        let paths = std::fs::read_dir("articles")?;
+        for path in paths {
+            let path = path?.path();
+            let path = match path.to_str() {
+                Some(path) => path,
+                None => continue,
+            };
+            let article = LocalArticle::from_file(path)?;
+
+            articles.push(article);
+        }
+        Ok(Self { articles })
     }
 
-    pub fn save(
+    pub fn build_articles(
         &self,
-        env: minijinja::Environment<'static>,
-        default_ctx: minijinja::Value,
-        path: &str,
-    ) -> Result<(), std::io::Error> {
-        let html = self.render(env, default_ctx);
-        std::fs::write(path, html)
+        env: &minijinja::Environment<'static>,
+        default_ctx: &minijinja::Value,
+    ) -> Result<(), ()> {
+        for article in &self.articles {
+            let path = format!(
+                "generates/articles/{}.html",
+                article.file_name.split('.').next().unwrap()
+            );
+            article.save(env, default_ctx, &path).unwrap();
+        }
+        Ok(())
+    }
+
+    pub fn generate_rss(&self, config: &Rss) -> Result<(), Box<dyn Error>> {
+        let mut items = Vec::new();
+        for article in &self.articles {
+            items.push(
+                rss::ItemBuilder::default()
+                    .title(article.options.title.clone())
+                    .link(format!("/articles/{}", article.file_name))
+                    .pub_date(article.pub_date.to_rfc2822())
+                    .description(article.options.description.clone())
+                    .build(),
+            );
+        }
+
+        let channel = ChannelBuilder::default()
+            .title(&config.title)
+            .description(&config.description)
+            .link(&config.url)
+            .items(items)
+            .build();
+        let mut file = fs::File::create("generates/rss.xml")?;
+        file.write_all(channel.to_string().as_bytes())?;
+        Ok(())
     }
 }

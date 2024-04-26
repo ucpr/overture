@@ -49,6 +49,7 @@ name = "John Akiyama"
 [rss]
 external_rss_links = ["https://zenn.dev/ucpr/feed?include_scraps=1", "https://ucpr.hatenablog.com/rss"]
 title = "Default RSS Title"
+url = "https://example.com/rss"
 description = "Default RSS Description"
 
 [google_analytics]

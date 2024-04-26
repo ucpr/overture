@@ -1,9 +1,9 @@
-use serde::{Deserialize, Serialize};
-use toml;
-
 use std::fs;
 use std::io::Write;
 use std::path::PathBuf;
+
+use serde::{Deserialize, Serialize};
+use toml;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
@@ -39,6 +39,7 @@ pub struct Footer {
 pub struct Rss {
     pub external_rss_links: Vec<String>,
     pub title: String,
+    pub url: String,
     pub description: String,
 }
 
@@ -142,6 +143,7 @@ impl Default for Config {
             rss: Rss {
                 title: "Default RSS Title".to_string(),
                 description: "Default RSS Description".to_string(),
+                url: "https://example.com/rss".to_string(),
                 external_rss_links: vec![
                     "https://zenn.dev/ucpr/feed?include_scraps=1".to_string(),
                     "https://ucpr.hatenablog.com/rss".to_string(),
